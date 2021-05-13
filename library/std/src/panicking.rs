@@ -450,7 +450,7 @@ pub fn panicking() -> bool {
 #[cfg_attr(feature = "panic_immediate_abort", inline)]
 pub fn begin_panic_fmt(msg: &fmt::Arguments<'_>) -> ! {
     if cfg!(feature = "panic_immediate_abort") {
-        intrinsics::abort()
+        process::abort()
     }
 
     let info = PanicInfo::internal_constructor(Some(msg), Location::caller());
@@ -534,7 +534,7 @@ pub fn begin_panic_handler(info: &PanicInfo<'_>) -> ! {
 #[track_caller]
 pub fn begin_panic<M: Any + Send>(msg: M) -> ! {
     if cfg!(feature = "panic_immediate_abort") {
-        intrinsics::abort()
+        process::abort()
     }
 
     let loc = Location::caller();
@@ -606,7 +606,7 @@ fn rust_panic_with_hook(
                 panicinfo
             ));
         }
-        intrinsics::abort()
+        process::abort()
     }
 
     unsafe {
@@ -638,7 +638,7 @@ fn rust_panic_with_hook(
         // just abort. In the future we may consider resuming
         // unwinding or otherwise exiting the thread cleanly.
         util::dumb_print(format_args!("thread panicked while panicking. aborting.\n"));
-        intrinsics::abort()
+        process::abort()
     }
 
     rust_panic(payload)
