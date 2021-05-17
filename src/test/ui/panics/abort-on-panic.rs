@@ -3,14 +3,11 @@
 #![allow(unused_must_use)]
 #![feature(unwind_attributes)]
 #![feature(panic_always_abort)]
-#![feature(rustc_private)]
 // Since we mark some ABIs as "nounwind" to LLVM, we must make sure that
 // we never unwind through them.
 
 // ignore-emscripten no processes
 // ignore-sgx no processes
-
-extern crate libc;
 
 use std::{env, panic};
 use std::io::prelude::*;
@@ -97,9 +94,6 @@ fn main() {
         // Any reasonable platform can distinguish a process which
         // called exit(1) from one which panicked.
         assert_ne!(status.code(), Some(1));
-
-        #[cfg(unix)]
-        assert_eq!(std::os::unix::process::ExitStatusExt::signal(&status), Some(libc::SIGABRT));
     };
 
     for (a,_f) in tests {
